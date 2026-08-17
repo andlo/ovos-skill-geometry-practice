@@ -1,0 +1,24 @@
+{
+  "skill_id": "ovos-skill-geometry-practice.andlo",
+  "source": "https://github.com/andlo/ovos-skill-geometry-practice",
+  "package_name": "ovos-skill-geometry-practice",
+  "pip_spec": "ovos-skill-geometry-practice",
+  "license": "GPL-3.0-or-later",
+  "author": "andlo",
+  "name": "Geometritræning",
+  "description": "Geometritræning - quizzer og undervisning i begreber, formler og pythagoras' sætning. Fuldstændig offline.",
+  "examples": [
+    "quiz mig i geometribegreber",
+    "quiz mig i areal og omkreds",
+    "quiz mig i pythagoras",
+    "lær mig om termer",
+    "quiz mig i det du lærte mig"
+  ],
+  "tags": [
+    "geometri",
+    "uddannelse",
+    "matematik",
+    "quiz"
+  ],
+  "icon": "https://raw.githubusercontent.com/andlo/ovos-skill-geometry-practice/main/icon.png"
+}

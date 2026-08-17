@@ -1,0 +1,24 @@
+{
+  "skill_id": "ovos-skill-geometry-practice.andlo",
+  "source": "https://github.com/andlo/ovos-skill-geometry-practice",
+  "package_name": "ovos-skill-geometry-practice",
+  "pip_spec": "ovos-skill-geometry-practice",
+  "license": "GPL-3.0-or-later",
+  "author": "andlo",
+  "name": "Entrenamiento de geometría",
+  "description": "Entrenamiento de geometría - cuestionarios y aprendizaje de términos, fórmulas y el teorema de Pitágoras. Totalmente sin conexión.",
+  "examples": [
+    "pregúntame sobre términos de geometría",
+    "pregúntame sobre área y perímetro",
+    "pregúntame sobre pitágoras",
+    "enséñame sobre términos",
+    "pregúntame sobre lo que me enseñaste"
+  ],
+  "tags": [
+    "geometría",
+    "educación",
+    "matemáticas",
+    "quiz"
+  ],
+  "icon": "https://raw.githubusercontent.com/andlo/ovos-skill-geometry-practice/main/icon.png"
+}

@@ -1,96 +1,105 @@
-# Geometry Practice — a design document, not a working skill yet
+# <img src='icon.png' card_color='#8E24AA' width='50' height='50' style='vertical-align:bottom'/> Geometry Practice
 
-**Status: idea and architecture stage.** Part of the `*-practice`
-family. Split out as its own skill rather than folded into
-`ovos-skill-math-practice` or `ovos-skill-science-practice` - see
-[ovos-skill-math-practice issue #6](https://github.com/andlo/ovos-skill-math-practice/issues/6)
-for the scope discussion that led here.
+Interactive geometry quizzes and teach-then-practice - glossary term
+recognition, area/perimeter/circumference calculation, and
+Pythagoras' theorem. Fully offline, available in English, Danish,
+German, French, and Spanish.
 
-## The idea
+[![Tests](https://github.com/andlo/ovos-skill-geometry-practice/actions/workflows/test.yml/badge.svg)](https://github.com/andlo/ovos-skill-geometry-practice/actions/workflows/test.yml)
+[![PyPI version](https://img.shields.io/pypi/v/ovos-skill-geometry-practice.svg)](https://pypi.org/project/ovos-skill-geometry-practice/)
 
-Named theorems (Pythagoras' theorem), area/perimeter/volume formulas,
-and similar geometric results - genuinely different from
-`math-practice`'s arithmetic-fluency drilling (+/-/x/÷) and from
-`science-practice`'s "well-defined, stable trivia" (physical
-constants, the periodic table): geometry blends FACTUAL recall (the
-formula itself) with actually APPLYING it numerically. "A triangle
-has legs 3 and 4, what's the hypotenuse" needs both "know the
-formula" and "do the arithmetic" - neither half alone is the
-exercise.
+- [Depends on ovos-skill-geometry](#depends-on-ovos-skill-geometry)
+- [Quiz](#quiz)
+- [Teach-then-practice](#teach-then-practice)
+- [A real tolerance-band, for the first time in this project family](#a-real-tolerance-band-for-the-first-time-in-this-project-family)
+- [Usage](#usage)
+- [Install](#install)
+- [Development](#development)
 
-## Likely scope (not yet decided in detail)
+## Depends on ovos-skill-geometry
 
-- **Named theorems**: Pythagoras' theorem to start (`a² + b² = c²`)
-  - the clearest "formula + apply it" example. Others (e.g. the law
-  of cosines) are plausible later additions, not v1.
-- **Area/perimeter formulas**: rectangle, triangle, circle - both
-  "recite the formula" (teach mode) and "apply it to these numbers"
-  (quiz mode), mirroring `math-practice`'s teach-then-practice split.
-- **Volume formulas**: cube, cylinder, sphere - probably a second
-  pass after 2D shapes are solid, not launched simultaneously.
-- Likely NOT in scope for v1: trigonometry beyond Pythagoras,
-  coordinate geometry, proofs. Keep the exercise "know the formula,
-  apply it to concrete numbers" - anything requiring multi-step
-  derivation is a different, harder exercise than this skill's
-  starting scope.
+[ovos-skill-geometry](https://github.com/andlo/ovos-skill-geometry)
+is a utility skill providing the glossary, formulas, and computation
+functions this package quizzes on - the same relationship
+`ovos-skill-geography-practice` has with `ovos-skill-geography`.
+Installing this skill pulls that one in too, so both the knowledge
+intents ("what is a rhombus") and the quiz intents below end up
+active.
 
-## Real, open design questions
+## Quiz
 
-- **Grading tolerance for non-integer results.** `√(3²+4²) = 5` is a
-  clean example, but most triangles won't have integer hypotenuses -
-  "what's the hypotenuse of a triangle with legs 5 and 7" has an
-  irrational answer. This is the SAME open tolerance-band question
-  raised in
-  [ovos-skill-unit-practice](https://github.com/andlo/ovos-skill-unit-practice)'s
-  design doc and
-  [ovos-skill-math-practice issue #5](https://github.com/andlo/ovos-skill-math-practice/issues/5)
-  (fractions/decimals) - worth designing the tolerance approach once,
-  in whichever of the three lands first, and having the other two
-  reuse it rather than solving it three times independently.
-- **Problem generation with clean-by-construction numbers.**
-  `math-practice`'s pattern is to construct problems so the answer is
-  guaranteed exact (e.g. division built as divisor × quotient) rather
-  than relying on tolerance. For Pythagoras specifically, Pythagorean
-  triples (3-4-5, 5-12-13, 8-15-17, ...) give exact integer answers
-  for free - worth generating FROM a known triple (possibly scaled)
-  rather than picking two random legs and rounding the hypotenuse,
-  at least for an "easy" difficulty tier. Non-triple legs (needing
-  real tolerance-band grading) would be a separate, harder tier.
-- **Teach mode content.** Does teach mode recite the formula itself
-  ("the area of a rectangle is length times width"), or a set of
-  worked examples the same way `math-practice` teaches facts rows?
-  Probably needs both - formula first, then example rows - but not
-  designed here yet.
-- **Spoken problem phrasing.** "A triangle has legs 3 and 4, what's
-  the hypotenuse" is fine written down; whether it's parsed
-  unambiguously as spoken input (which number is which leg, is "legs"
-  even in a listener's spoken response) isn't tested yet - same class
-  of concern as
-  [ovos-skill-math-practice issue #4](https://github.com/andlo/ovos-skill-math-practice/issues/4)'s
-  spoken-ambiguity flag for order-of-operations questions.
+- `"quiz me on geometry terms"` - 5 multiple-choice questions ("which
+  of these is the definition of a rhombus? A: ..., B: ..., C: ...").
+  Distractors are OTHER glossary entries' REAL definitions from the
+  same category (a shape's wrong options are other shapes, not random
+  terms) - never invented text.
+- `"quiz me on area and perimeter"` - 5 numeric questions mixing
+  rectangle/square/triangle (exact grading) and circle (real
+  tolerance-band grading, since pi makes the answer irrational).
+- `"quiz me on pythagoras"` - 5 hypotenuse questions mixing known
+  Pythagorean triples (exact) and arbitrary legs (tolerance-band).
 
-## Example exercises (illustrative, not final wording)
+## Teach-then-practice
 
+The shared pattern from
+[ovos-skill-math-practice](https://github.com/andlo/ovos-skill-math-practice)
+(see its [issue #1](https://github.com/andlo/ovos-skill-math-practice/issues/1)):
+
+- `"teach me about terms"` / `"teach me about 2d shapes"` / `"teach
+  me about 3d shapes"` - recites each entry's definition, and for
+  rectangle/square/triangle/circle, also the formula in words plus a
+  worked example ("the area of a rectangle is length times width -
+  the area of a rectangle with length 5 and width 3 is 15"). Say
+  "repeat" to hear one again.
+- `"teach me pythagoras' theorem"` - the theorem plus a worked 3-4-5
+  example.
+- `"quiz me on what you taught me"` then quizzes ONLY on what was
+  taught - a mix of definition-recognition and (where applicable)
+  numeric formula questions.
+
+## A real tolerance-band, for the first time in this project family
+
+Every other `*-practice` skill (math, geography) constructs its quiz
+problems so the answer is always EXACT - no tolerance needed at all.
+Geometry can't always do that: circle area/circumference (uses pi)
+and a Pythagorean hypotenuse from non-triple legs are genuinely
+irrational numbers. This skill uses a real percentage-based
+tolerance-band (`within_tolerance()`, 2%) for exactly those two
+cases - and still constructs everything else exact (rectangle/
+square/triangle area/perimeter, triple-based Pythagoras) rather than
+defaulting to tolerance everywhere. See DEVELOPMENT.md for the full
+reasoning and how it's distinct from the float-representation
+"epsilon guard" the rest of the family already uses for decimals.
+
+## Usage
 ```
-"teach me pythagoras' theorem"
+"quiz me on geometry terms"
+"quiz me on area and perimeter"
 "quiz me on pythagoras"
-"what is the area of a triangle with base 6 and height 4"
-"quiz mig i pythagoras' sætning"
+"teach me about terms"
+"teach me pythagoras' theorem"
+"quiz me on what you taught me"
+"quiz mig i geometribegreber"        (Danish)
+"lær mig om termer"                  (Danish)
+"quiz mich zu geometriebegriffen"    (German)
+"bring mir etwas über begriffe bei"  (German)
+"interroge-moi sur les termes de géométrie"  (French)
+"apprends-moi les termes"            (French)
+"pregúntame sobre términos de geometría"  (Spanish)
+"enséñame sobre términos"            (Spanish)
 ```
 
-## Shared pattern: teach-then-practice
+## Install
+```bash
+pip install ovos-skill-geometry-practice
+```
 
-Once implementation starts, this skill should adopt the "teach, then
-quiz on what was taught" pattern designed on `ovos-skill-math-practice`
-(see [issue #1](https://github.com/andlo/ovos-skill-math-practice/issues/1))
-rather than re-deriving the same architecture slightly differently
-here. Not re-designed in this README to avoid the same pattern
-existing in a slightly different shape in every `*-practice` sibling
-- the shared design lives in one place and every sibling points back
-to it.
+## Development
+
+See [DEVELOPMENT.md](DEVELOPMENT.md).
 
 ## Category
 **Education**
 
 ## Tags
-#geometry #math #education #quiz #idea #design-doc
+#geometry #math #education #quiz #pythagoras

@@ -1,0 +1,24 @@
+{
+  "skill_id": "ovos-skill-geometry-practice.andlo",
+  "source": "https://github.com/andlo/ovos-skill-geometry-practice",
+  "package_name": "ovos-skill-geometry-practice",
+  "pip_spec": "ovos-skill-geometry-practice",
+  "license": "GPL-3.0-or-later",
+  "author": "andlo",
+  "name": "Entraînement de géométrie",
+  "description": "Entraînement de géométrie - quiz et apprentissage des termes, formules et du théorème de Pythagore. Entièrement hors ligne.",
+  "examples": [
+    "interroge-moi sur les termes de géométrie",
+    "interroge-moi sur l'aire et le périmètre",
+    "interroge-moi sur pythagore",
+    "apprends-moi les termes",
+    "interroge-moi sur ce que tu m'as appris"
+  ],
+  "tags": [
+    "géométrie",
+    "éducation",
+    "mathématiques",
+    "quiz"
+  ],
+  "icon": "https://raw.githubusercontent.com/andlo/ovos-skill-geometry-practice/main/icon.png"
+}

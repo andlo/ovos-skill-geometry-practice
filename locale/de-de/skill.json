@@ -1,0 +1,24 @@
+{
+  "skill_id": "ovos-skill-geometry-practice.andlo",
+  "source": "https://github.com/andlo/ovos-skill-geometry-practice",
+  "package_name": "ovos-skill-geometry-practice",
+  "pip_spec": "ovos-skill-geometry-practice",
+  "license": "GPL-3.0-or-later",
+  "author": "andlo",
+  "name": "Geometrietraining",
+  "description": "Geometrietraining - Quiz und Lehr-dann-üben für Begriffe, Formeln und den Satz des Pythagoras. Vollständig offline.",
+  "examples": [
+    "quiz mich zu geometriebegriffen",
+    "quiz mich zu fläche und umfang",
+    "quiz mich zu pythagoras",
+    "bring mir etwas über begriffe bei",
+    "quiz mich zu dem was du mir beigebracht hast"
+  ],
+  "tags": [
+    "geometrie",
+    "bildung",
+    "mathematik",
+    "quiz"
+  ],
+  "icon": "https://raw.githubusercontent.com/andlo/ovos-skill-geometry-practice/main/icon.png"
+}
