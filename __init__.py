@@ -41,6 +41,11 @@ tolerance is the exception, not the default, even here.
 
 import random
 
+import functools
+import threading
+
+from ovos_bus_client.message import Message
+from ovos_bus_client.session import SessionManager
 from ovos_workshop.skills import OVOSSkill
 from ovos_workshop.decorators import intent_handler
 
@@ -221,7 +226,91 @@ WORKED_EXAMPLE_DIALOG = {
 }
 
 
+class QuizStopped(Exception):
+    """Raised inside a quiz or lesson once "stop" was requested for its
+    session, so the question loop ends instead of asking the next one."""
+
+
+def _session_id(message):
+    try:
+        return SessionManager.get(message).session_id
+    except Exception:  # no usable session in the message
+        return "default"
+
+
+def stoppable(handler):
+    """Marks an intent handler as stoppable: while it runs, can_stop()
+    answers True for its session, and a stop for that session makes the
+    next (or current) question end the handler quietly."""
+    @functools.wraps(handler)
+    def wrapper(self, message):
+        sid = _session_id(message)
+        state = self._stop_state()
+        state["active"].add(sid)
+        state["requested"].discard(sid)
+        state["local"].sid = sid
+        try:
+            return handler(self, message)
+        except QuizStopped:
+            self.log.info(f"stopped in session {sid}")
+        finally:
+            state["active"].discard(sid)
+            state["requested"].discard(sid)
+            state["local"].sid = None
+    return wrapper
+
+
 class GeometryPractice(OVOSSkill):
+
+
+    # ------------------------------------------------------------------
+    # Stop support (session-scoped)
+    # ------------------------------------------------------------------
+
+    def _stop_state(self):
+        state = self.__dict__.get("_stop_state_data")
+        if state is None:
+            state = {"active": set(), "requested": set(), "local": threading.local()}
+            self.__dict__["_stop_state_data"] = state
+        return state
+
+    def _raise_if_stopped(self):
+        state = self._stop_state()
+        sid = getattr(state["local"], "sid", None)
+        if sid is not None and sid in state["requested"]:
+            raise QuizStopped()
+
+    def _ask(self, *args, **kwargs):
+        """get_response() that ends the quiz/lesson once stop was
+        requested - before asking, and after the (then aborted) wait."""
+        self._raise_if_stopped()
+        response = self.get_response(*args, **kwargs)
+        self._raise_if_stopped()
+        return response
+
+    def can_stop(self, message) -> bool:
+        return _session_id(message) in self._stop_state()["active"]
+
+    def stop_session(self, session) -> bool:
+        state = self._stop_state()
+        if session.session_id in state["active"]:
+            state["requested"].add(session.session_id)
+            # End a get_response() that is waiting right now. Setting the
+            # response to None (what workshop does after a successful stop)
+            # is not enough on ovos-workshop 7.x: the wait loop keeps going.
+            # abort_question is the supported way on 7.x and 9.x alike.
+            self.bus.emit(Message("mycroft.skills.abort_question",
+                                  {"skill_id": self.skill_id},
+                                  {"session": session.serialize(),
+                                   "skill_id": self.skill_id}))
+            # ovos-workshop 7.x: after the wait is aborted, get_response()
+            # keeps polling its validated answer, which is still [] - so it
+            # never returns. None is what workshop itself sets on "cancel".
+            validated = getattr(self, "_OVOSSkill__validated_responses", None)
+            if isinstance(validated, dict):
+                validated[session.session_id] = None
+            return True
+        return False
 
     def initialize(self):
         self._taught_keys = []  # glossary keys taught this session, plus the sentinel "pythagorean"
@@ -231,7 +320,7 @@ class GeometryPractice(OVOSSkill):
         letters = ["A", "B", "C"][:len(choices)]
         options = "; ".join(
             f"{letter}: {term_definition(k, self.lang)}" for letter, k in zip(letters, choices))
-        response = self.get_response(dialog="quiz_question_definition", data={
+        response = self._ask(dialog="quiz_question_definition", data={
             "term": term_name(term, self.lang), "options": options})
         if response is None:
             self.speak_dialog("quiz_no_answer")
@@ -252,7 +341,7 @@ class GeometryPractice(OVOSSkill):
 
     def _ask_and_grade_area_perimeter(self, shape, prop, dims, correct_value, exact):
         dims_formatted = {k: format_number(v) for k, v in dims.items()}
-        response = self.get_response(dialog=SHAPE_PHRASE_DIALOG[shape], data={
+        response = self._ask(dialog=SHAPE_PHRASE_DIALOG[shape], data={
             **dims_formatted, "property": term_name(prop, self.lang)})
         if response is None:
             self.speak_dialog("quiz_no_answer")
@@ -264,7 +353,7 @@ class GeometryPractice(OVOSSkill):
         return False
 
     def _ask_and_grade_pythagoras(self, leg_a, leg_b, hyp, exact):
-        response = self.get_response(dialog="quiz_question_pythagoras", data={
+        response = self._ask(dialog="quiz_question_pythagoras", data={
             "leg_a": format_number(leg_a), "leg_b": format_number(leg_b)})
         if response is None:
             self.speak_dialog("quiz_no_answer")
@@ -277,6 +366,7 @@ class GeometryPractice(OVOSSkill):
 
 
     @intent_handler("quiz_terms.intent")
+    @stoppable
     def handle_quiz_terms(self, message):
         correct_count = 0
         for _ in range(NUM_QUIZ_QUESTIONS):
@@ -285,6 +375,7 @@ class GeometryPractice(OVOSSkill):
         self.speak_dialog("quiz_finished", {"correct": correct_count, "total": NUM_QUIZ_QUESTIONS})
 
     @intent_handler("quiz_area_perimeter.intent")
+    @stoppable
     def handle_quiz_area_perimeter(self, message):
         correct_count = 0
         for _ in range(NUM_QUIZ_QUESTIONS):
@@ -294,6 +385,7 @@ class GeometryPractice(OVOSSkill):
         self.speak_dialog("quiz_finished", {"correct": correct_count, "total": NUM_QUIZ_QUESTIONS})
 
     @intent_handler("quiz_pythagoras.intent")
+    @stoppable
     def handle_quiz_pythagoras(self, message):
         correct_count = 0
         for _ in range(NUM_QUIZ_QUESTIONS):
@@ -346,13 +438,14 @@ class GeometryPractice(OVOSSkill):
 
             if idx == len(keys) - 1:
                 break
-            response = self.get_response(dialog="continue_teaching_prompt")
+            response = self._ask(dialog="continue_teaching_prompt")
             if response and self.voc_match(response, "repeat"):
                 self.speak(rendered, wait=True)
 
         self.speak_dialog("teaching_finished", {"count": len(self._taught_keys)})
 
     @intent_handler("teach_me.intent")
+    @stoppable
     def handle_teach_me(self, message):
         category_raw = message.data.get("category")
         category = resolve_category(category_raw, self.lang)
@@ -363,6 +456,7 @@ class GeometryPractice(OVOSSkill):
         self._teach_terms(keys)
 
     @intent_handler("teach_pythagoras.intent")
+    @stoppable
     def handle_teach_pythagoras(self, message):
         formula = formula_words("pythagorean", self.lang)
         a, b, c = 3, 4, 5
@@ -374,6 +468,7 @@ class GeometryPractice(OVOSSkill):
         self.speak_dialog("teaching_finished", {"count": 1})
 
     @intent_handler("quiz_taught.intent")
+    @stoppable
     def handle_quiz_taught(self, message):
         """For each taught key: the Pythagoras sentinel always gets a
         Pythagoras question; a shape with formulas gets a 50/50 mix
