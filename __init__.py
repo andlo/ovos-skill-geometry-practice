@@ -231,6 +231,21 @@ class QuizStopped(Exception):
     session, so the question loop ends instead of asking the next one."""
 
 
+class QuizAbandoned(Exception):
+    """Raised when a question gets no answer (silence, timeout or
+    "cancel"), so the quiz ends instead of asking the next question.
+    Nobody is there to answer it, and on ovos-workshop 7.x every
+    unanswered get_response() holds one of ovos-core's bus threads."""
+
+
+# How many silent listening windows get_response() allows before it
+# gives up and returns None (it listens again in between, without
+# repeating the question). ovos-workshop's default, -1, never gives up
+# on 7.x, which stable/testing still ship (fixed in 9.x by
+# ovos-workshop#514). 2 = one extra chance for a slow answer.
+ASK_RETRIES = 2
+
+
 def _session_id(message):
     try:
         return SessionManager.get(message).session_id
@@ -253,6 +268,9 @@ def stoppable(handler):
             return handler(self, message)
         except QuizStopped:
             self.log.info(f"stopped in session {sid}")
+        except QuizAbandoned:
+            self.log.info(f"no answer, ending in session {sid}")
+            self.speak_dialog("quiz_no_answer")
         finally:
             state["active"].discard(sid)
             state["requested"].discard(sid)
@@ -280,12 +298,21 @@ class GeometryPractice(OVOSSkill):
         if sid is not None and sid in state["requested"]:
             raise QuizStopped()
 
-    def _ask(self, *args, **kwargs):
+    def _ask(self, *args, end_on_no_answer=True, **kwargs):
         """get_response() that ends the quiz/lesson once stop was
-        requested - before asking, and after the (then aborted) wait."""
+        requested - before asking, and after the (then aborted) wait.
+
+        Listens at most ASK_RETRIES times for an answer, and when
+        there is still none (or the user said "cancel"),
+        ends the quiz via QuizAbandoned instead of asking the next
+        question. end_on_no_answer=False is for prompts where silence
+        means "go on" (continue_teaching_prompt)."""
+        kwargs.setdefault("num_retries", ASK_RETRIES)
         self._raise_if_stopped()
         response = self.get_response(*args, **kwargs)
         self._raise_if_stopped()
+        if response is None and end_on_no_answer:
+            raise QuizAbandoned()
         return response
 
     def can_stop(self, message) -> bool:
@@ -438,7 +465,7 @@ class GeometryPractice(OVOSSkill):
 
             if idx == len(keys) - 1:
                 break
-            response = self._ask(dialog="continue_teaching_prompt")
+            response = self._ask(dialog="continue_teaching_prompt", end_on_no_answer=False)
             if response and self.voc_match(response, "repeat"):
                 self.speak(rendered, wait=True)
 
