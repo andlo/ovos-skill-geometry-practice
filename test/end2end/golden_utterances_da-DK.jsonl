@@ -1,0 +1,12 @@
+{"utterance": "quiz mig i areal og omkreds", "lang": "da-DK", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "quiz_area_perimeter"}
+{"utterance": "quiz mig i figurudregninger", "lang": "da-DK", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "quiz_area_perimeter"}
+{"utterance": "quiz mig i pythagoras", "lang": "da-DK", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "quiz_pythagoras"}
+{"utterance": "quiz mig i pythagoras' sætning", "lang": "da-DK", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "quiz_pythagoras"}
+{"utterance": "quiz mig i det du lærte mig", "lang": "da-DK", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "quiz_taught"}
+{"utterance": "quiz mig i det jeg lige lærte", "lang": "da-DK", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "quiz_taught"}
+{"utterance": "quiz mig i geometribegreber", "lang": "da-DK", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "quiz_terms"}
+{"utterance": "quiz mig i former", "lang": "da-DK", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "quiz_terms"}
+{"utterance": "lær mig om termer", "lang": "da-DK", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "teach_me"}
+{"utterance": "lær mig geometri 2d former", "lang": "da-DK", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "teach_me"}
+{"utterance": "lær mig pythagoras' sætning", "lang": "da-DK", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "teach_pythagoras"}
+{"utterance": "lær mig om pythagoras", "lang": "da-DK", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "teach_pythagoras"}
