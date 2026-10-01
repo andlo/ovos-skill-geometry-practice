@@ -1,0 +1,12 @@
+{"utterance": "quiz me on area and perimeter", "lang": "en-US", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "quiz_area_perimeter"}
+{"utterance": "quiz me on shape calculations", "lang": "en-US", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "quiz_area_perimeter"}
+{"utterance": "quiz me on pythagoras", "lang": "en-US", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "quiz_pythagoras"}
+{"utterance": "quiz me on the pythagorean theorem", "lang": "en-US", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "quiz_pythagoras"}
+{"utterance": "quiz me on what you taught me", "lang": "en-US", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "quiz_taught"}
+{"utterance": "quiz me on what I just learned", "lang": "en-US", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "quiz_taught"}
+{"utterance": "quiz me on geometry terms", "lang": "en-US", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "quiz_terms"}
+{"utterance": "quiz me on shapes", "lang": "en-US", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "quiz_terms"}
+{"utterance": "teach me about terms", "lang": "en-US", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "teach_me"}
+{"utterance": "teach me geometry 2d shapes", "lang": "en-US", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "teach_me"}
+{"utterance": "teach me pythagoras' theorem", "lang": "en-US", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "teach_pythagoras"}
+{"utterance": "teach me about pythagoras", "lang": "en-US", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "teach_pythagoras"}

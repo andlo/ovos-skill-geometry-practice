@@ -1,0 +1,12 @@
+{"utterance": "interroge-moi sur l'aire et le périmètre", "lang": "fr-FR", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "quiz_area_perimeter"}
+{"utterance": "interroge-moi sur les calculs de formes", "lang": "fr-FR", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "quiz_area_perimeter"}
+{"utterance": "interroge-moi sur pythagore", "lang": "fr-FR", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "quiz_pythagoras"}
+{"utterance": "interroge-moi sur le théorème de pythagore", "lang": "fr-FR", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "quiz_pythagoras"}
+{"utterance": "interroge-moi sur ce que tu m'as appris", "lang": "fr-FR", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "quiz_taught"}
+{"utterance": "interroge-moi sur ce que je viens d'apprendre", "lang": "fr-FR", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "quiz_taught"}
+{"utterance": "interroge-moi sur les termes de géométrie", "lang": "fr-FR", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "quiz_terms"}
+{"utterance": "interroge-moi sur les formes", "lang": "fr-FR", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "quiz_terms"}
+{"utterance": "apprends-moi termes", "lang": "fr-FR", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "teach_me"}
+{"utterance": "apprends-moi la géométrie des formes en 2d", "lang": "fr-FR", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "teach_me"}
+{"utterance": "apprends-moi le théorème de pythagore", "lang": "fr-FR", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "teach_pythagoras"}
+{"utterance": "apprends-moi pythagore", "lang": "fr-FR", "skill_id": "ovos-skill-geometry-practice.andlo", "intent_label": "teach_pythagoras"}
